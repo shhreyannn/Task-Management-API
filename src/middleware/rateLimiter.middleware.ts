@@ -9,7 +9,7 @@ export const authLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   store: new RedisStore({
-    sendCommand: (...args: string[]) => redisClient.call(...args),
+    sendCommand: (...args: string[]) => (redisClient as any).call(...args),
   }),
   handler: (req, res) => {
     res
