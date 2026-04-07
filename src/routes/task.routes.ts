@@ -1,10 +1,10 @@
-const express = require('express');
-const router = express.Router();
-const taskController = require('../controllers/task.controller');
-const { validateTaskCreate, validateTaskUpdate } = require('../validators/task.validator');
-const authMiddleware = require('../middleware/auth.middleware');
+import express from 'express';
+import * as taskController from '../controllers/task.controller';
+import { validateTaskCreate, validateTaskUpdate } from '../validators/task.validator';
+import authMiddleware from '../middleware/auth.middleware';
 
-// Protect all task routes
+const router = express.Router();
+
 router.use(authMiddleware);
 
 router.post('/', validateTaskCreate, taskController.createTask);
@@ -13,4 +13,4 @@ router.get('/:id', taskController.getTaskById);
 router.patch('/:id', validateTaskUpdate, taskController.updateTask);
 router.delete('/:id', taskController.deleteTask);
 
-module.exports = router;
+export default router;
