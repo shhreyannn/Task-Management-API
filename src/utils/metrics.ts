@@ -4,9 +4,8 @@ import express, { Request, Response } from 'express';
 const register = new client.Registry();
 
 client.collectDefaultMetrics({
-  app: 'task-api',
+  labels: { app: 'task-api' },
   prefix: 'node_',
-  timeout: 10000,
   gcDurationBuckets: [0.001, 0.01, 0.1, 1, 2, 5],
   register,
 });
