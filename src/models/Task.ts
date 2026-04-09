@@ -7,6 +7,9 @@ export interface ITask extends Document {
   status: 'pending' | 'completed';
   userId: string;
   isDeleted: boolean;
+  category?: 'Work' | 'Personal' | 'Urgent';
+  tags?: string[];
+  reminderJobId?: string;
 }
 
 const taskSchema = new Schema<ITask>(
@@ -17,6 +20,9 @@ const taskSchema = new Schema<ITask>(
     status: { type: String, enum: ['pending', 'completed'], default: 'pending' },
     userId: { type: String, required: true },
     isDeleted: { type: Boolean, default: false },
+    category: { type: String, enum: ['Work', 'Personal', 'Urgent'] },
+    tags: { type: [String], default: [] },
+    reminderJobId: { type: String },
   },
   {
     timestamps: true,

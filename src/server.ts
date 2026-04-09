@@ -4,6 +4,8 @@ import { connectPostgres } from './config/db.postgres';
 import { connectMongo } from './config/db.mongo';
 import { TaskService } from './services/task.service';
 import { env } from './config/env';
+import './workers/reminder.worker';
+import './workers/webhook.worker';
 
 const startServer = async () => {
   try {

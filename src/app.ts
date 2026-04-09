@@ -4,6 +4,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import authRoutes from './routes/auth.routes';
 import taskRoutes from './routes/task.routes';
+import classificationRoutes from './routes/classification.routes';
 import errorHandler from './middleware/error.middleware';
 import requestLogger from './middleware/requestLogger.middleware';
 import { authLimiter } from './middleware/rateLimiter.middleware';
@@ -26,6 +27,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/tasks', taskRoutes);
+app.use('/api/classifications', classificationRoutes);
 
 app.get('/', (req: Request, res: Response) => {
   res.status(200).json({ success: true, message: 'Welcome to the Task Management API.' });

@@ -17,7 +17,9 @@
   "license": "ISC",
   "dependencies": {
     "amqplib": "^1.0.3",
+    "axios": "^1.15.0",
     "bcrypt": "^6.0.0",
+    "bullmq": "^5.73.3",
     "cors": "^2.8.6",
     "dotenv": "^17.4.1",
     "express": "^5.2.1",

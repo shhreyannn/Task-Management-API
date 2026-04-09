@@ -47,10 +47,30 @@ Caching abuse requests via pure Node "In-Memory" matrices totally fails when sca
 ### 3. Graceful Archival 
 Standard Soft-Delete architectures (`isDeleted: true`) massively bloat operational querying metrics across extensive NoSQL collections. Executing `TaskService.archiveTask()` intelligently extracts relational pointers onto an independent static `ArchivedTask` model before "Hard-Deleting" the hot document, preserving index reading speeds flawlessly.
 
-### 4. Pure Domain Service Layer
+### 4. Event-Driven Architecture (BullMQ + Redis)
+*Why BullMQ + Redis for asynchronous processing?*
+With Redis already serving as an operational cache and rate limiting store, integrating BullMQ dynamically adds persistent, resilient Job Queuing without adding extra infrastructure overhead. This decouples logic like reminder notifications and webhook delivery out of the main HTTP request loop, vastly improving latency and ensuring robustness across failure states.
+
+#### Reminder Scheduling Logic
+When tasks receive a `dueDate` dynamically, the system intuitively computes a `dueDate - 1 Hour` offset. A custom job triggers on the `reminderQueue`. Critically, to handle mutability:
+- If a user changes the `dueDate`, the system seamlessly locates the old `jobId` from the MongoDB document, nullifies the scheduled trigger securely, and instantiates a distinct job reflecting the updated timeframe.
+- Early completions or deletions automatically remove the scheduled job ensuring no phantom reminders fire.
+
+#### Webhook Delivery & Resilience Matrix
+Upon a Task marked as "completed", a secondary event fires on the `webhookQueue`. Workers fetch the event structure (`taskId`, `title` etc.) and perform Axios POST sequences out to subscriber hook URLs.
+- **Failures & Exponential Backoff:** Network calls natively fail. If the target hook drops, our BullMQ configuration triggers a rigorous retry matrix natively (up to 3 times leveraging `1s, 2s, 4s` backoff progressions). This completely guards against temporary downstream congestion.
+
+### 5. Pure Domain Service Layer
 The internal Express logic sits practically vacant. All logic is isolated inside `AuthService` & `TaskService`. This decouples the Node routing engines letting engineers easily port the functional tasks out to Microservices, gRPC routines, or Serverless lambdas dynamically without rewriting internal algorithms.
 
+### 6. Dynamic Categorization & Tagging Strategy
+*Why create standalone schemas for Categories and Tags?*
+While inserting strings directly onto the `Task` object works for MVP scoping, separating Classification logic onto dedicated NoSQL clusters (`Category.ts`, `Tag.ts`) grants substantial long-term dividends.
+- First, it gives absolute CRUD authority mapping `/api/classifications`, meaning clients can dynamically fetch an aggregation of User-owned tags mapped inherently distinct from traversing gigabytes of core Task collections natively.
+- Using decoupled Mongoose models permits hard indexes (`userId` + `name`) natively assuring consistency, completely stopping accidental casing collision bugs ('Bug-Fix' vs 'bug-fix') via strict DB layer collision traps.
+
 ---
+
 
 ## 📂 Project Structure
 
@@ -92,7 +112,7 @@ Interactive `/api-docs` seamlessly spin up on Boot natively mapped dynamically d
 Endpoints inherently accept comprehensive mapping structures:
 
 ```http
-GET /api/tasks?page=1&limit=10&status=pending&sortBy=createdAt&order=desc
+GET /api/tasks?page=1&limit=10&status=pending&category=Work&tags=Bug,Urgent
 Authorization: Bearer <your_access_token>
 ```
 *Expected Response (`formatResponse` uniform format)*
@@ -109,6 +129,13 @@ Authorization: Bearer <your_access_token>
   "data": [ ... ]
 }
 ```
+
+### Full Classifications API
+Along with Task management, the API organically hosts a full CRUD ecosystem under `/api/classifications/` covering custom grouping sets intelligently:
+- `POST /api/classifications/categories`
+- `GET /api/classifications/categories`
+- `POST /api/classifications/tags`
+... extending fully outwards! Review `/api-docs` directly for real-world interface querying locally!
 
 ---
 

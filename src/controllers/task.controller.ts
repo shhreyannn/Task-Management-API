@@ -23,9 +23,11 @@ export const getTaskById = async (req: Request, res: Response) => {
 };
 
 export const updateTask = async (req: Request, res: Response) => {
-  const task = await TaskService.getTaskById(req.user.userId as string, req.params.id as string);
-  Object.assign(task, req.body);
-  await task.save();
+  const task = await TaskService.updateTask(
+    req.user.userId as string,
+    req.params.id as string,
+    req.body,
+  );
   res.status(200).json(formatResponse(true, 'Task updated successfully', task));
 };
 

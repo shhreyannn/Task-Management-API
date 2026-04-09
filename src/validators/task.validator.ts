@@ -22,6 +22,12 @@ export const validateTaskCreate = [
     .optional()
     .isIn(['pending', 'completed'])
     .withMessage('Status must be pending or completed'),
+  body('category')
+    .optional()
+    .isIn(['Work', 'Personal', 'Urgent'])
+    .withMessage('Category must be Work, Personal, or Urgent'),
+  body('tags').optional().isArray().withMessage('Tags must be an array of strings'),
+  body('tags.*').optional().isString().trim().escape(),
   (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -46,6 +52,12 @@ export const validateTaskUpdate = [
     .optional()
     .isIn(['pending', 'completed'])
     .withMessage('Status must be pending or completed'),
+  body('category')
+    .optional()
+    .isIn(['Work', 'Personal', 'Urgent'])
+    .withMessage('Category must be Work, Personal, or Urgent'),
+  body('tags').optional().isArray().withMessage('Tags must be an array of strings'),
+  body('tags.*').optional().isString().trim().escape(),
   (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
