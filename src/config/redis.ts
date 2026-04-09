@@ -3,7 +3,7 @@ import { env } from './env';
 import logger from '../utils/logger';
 
 export const redisClient = new Redis(env.REDIS_URL || 'redis://localhost:6379', {
-  maxRetriesPerRequest: 3, // Prevent hanging requests if Redis fatally drops
+  maxRetriesPerRequest: null, // Required by BullMQ
 });
 
 redisClient.on('error', (err) => {

@@ -25,6 +25,8 @@ services:
 
   postgres:
     image: postgres:15-alpine
+    ports:
+      - "5433:5432"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=secret
@@ -34,12 +36,15 @@ services:
 
   mongodb:
     image: mongo:6-jammy
+    ports:
+      - "27017:27017"
     volumes:
       - mongo_data_prod:/data/db
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
     ports:
+      - "5672:5672"
       - "15672:15672"
 
   redis:

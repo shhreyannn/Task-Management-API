@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest --detectOpenHandles --passWithNoTests",
     "start": "node dist/server.js",
-    "dev": "nodemon src/server.js",
+    "dev": "nodemon --exec ts-node src/server.ts",
     "build": "tsc",
     "lint": "eslint src/**/*.ts",
     "format": "prettier --write src/**/*.ts",
@@ -23,6 +23,7 @@
     "cors": "^2.8.6",
     "dotenv": "^17.4.1",
     "express": "^5.2.1",
+    "express-async-errors": "^3.1.1",
     "express-rate-limit": "^8.3.2",
     "express-validator": "^7.3.2",
     "helmet": "^8.1.0",

@@ -7,6 +7,7 @@ export const sequelize = new Sequelize(
   env.POSTGRES_PASSWORD as string,
   {
     host: env.POSTGRES_HOST,
+    port: env.POSTGRES_PORT as number,
     dialect: 'postgres',
     logging: false,
   },

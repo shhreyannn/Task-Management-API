@@ -3,11 +3,11 @@ import { sequelize } from '../config/db.postgres';
 import bcrypt from 'bcrypt';
 
 class User extends Model {
-  public id!: string;
-  public email!: string;
-  public password!: string;
+  declare public id: string;
+  declare public email: string;
+  declare public password: string;
 
-  public readonly created_at!: Date;
+  declare public readonly created_at: Date;
 
   public async comparePassword(candidatePassword: string): Promise<boolean> {
     return bcrypt.compare(candidatePassword, this.password);
